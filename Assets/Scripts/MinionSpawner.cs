@@ -1,11 +1,10 @@
-﻿using System;
-using NavJob.Components;
+﻿using NavJob.Components;
 using NavJob.Systems;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class MinionSpawner : MonoBehaviour {
     [SerializeField] private GameObject minionPrefab;
@@ -20,12 +19,13 @@ public class MinionSpawner : MonoBehaviour {
     private World defaultworld;
     private EntityManager entityManager;
     private int counter = 0;
+    private GameObjectConversionSettings settings;
 
     private void Start() {
         defaultworld = World.DefaultGameObjectInjectionWorld;
         entityManager = defaultworld.EntityManager;
 
-        var settings = GameObjectConversionSettings.FromWorld(defaultworld, null);
+        settings = GameObjectConversionSettings.FromWorld(defaultworld, new BlobAssetStore());
         entityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(minionPrefab, settings);
     }
 
@@ -34,6 +34,10 @@ public class MinionSpawner : MonoBehaviour {
         if (counter == 10) {
             spawnMinionGroup(this.transform.position, countX, countY, spacing);
         }
+    }
+
+    private void OnDestroy() {
+        settings.BlobAssetStore.Dispose();
     }
 
     private void spawnMinionGroup(float3 startAt, int xCount, int yCount, float spacingBetween) {
@@ -55,7 +59,7 @@ public class MinionSpawner : MonoBehaviour {
 
         entityManager.AddComponent(entity, typeof(NavAgent));
         entityManager.SetComponentData(entity, new NavAgent {
-            moveSpeed = 10f,
+            moveSpeed = 5f,
             acceleration = 1,
             position = position,
             stoppingDistance = 1,
@@ -65,11 +69,22 @@ public class MinionSpawner : MonoBehaviour {
         entityManager.AddComponent(entity, typeof(SyncPositionFromNavAgent));
         entityManager.AddComponent(entity, typeof(SyncRotationFromNavAgent));
 
+//        var boxCollider = Unity.Physics.BoxCollider.Create(new BoxGeometry() {
+//                Center = new float3(0, 1, 0),
+//                Size = new float3(1, 2, 1),
+//                Orientation = Quaternion.identity
+//            }
+//        );
+//        
+//        entityManager.AddComponent(entity, typeof(PhysicsCollider));
+//        entityManager.SetComponentData(entity, new PhysicsCollider() {Value = boxCollider});
+
         entityManager.SetComponentData(entity, new MinionData() {
             trackedID = squadLeader.GetInstanceID(),
             initialOffset = (float3) targetPosition - position
         });
 
-        NavAgentSystem.SetDestinationStatic(entity, entityManager.GetComponentData<NavAgent>(entity), targetPosition, 1);
+        NavAgentSystem.SetDestinationStatic(entity, entityManager.GetComponentData<NavAgent>(entity), targetPosition,
+            1);
     }
 }

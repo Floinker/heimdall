@@ -7,7 +7,11 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Physics;
+using Unity.Physics.Systems;
 using UnityEngine;
+using Random = System.Random;
+using RaycastHit = Unity.Physics.RaycastHit;
 
 #endregion
 
@@ -29,7 +33,7 @@ namespace NavJob.Systems {
             public int navMeshQuerySystemVersion;
 
             public void Execute(Entity entity, int index, ref NavAgent agent) {
-                if (agent.remainingDistance - agent.stoppingDistance > 0 || agent.status != AgentStatus.Moving) {
+                if (agent.remainingDistance - agent.stoppingDistance > 2 || agent.status != AgentStatus.Moving) {
                     return;
                 }
 
@@ -41,6 +45,57 @@ namespace NavJob.Systems {
                     agent.totalWaypoints = 0;
                     agent.currentWaypoint = 0;
                     agent.status = AgentStatus.Idle;
+                }
+            }
+        }
+
+        [BurstCompile]
+        private struct localAvoidanceCheck : IJobForEachWithEntity<NavAgent> {
+            internal float dt;
+            [ReadOnly] public CollisionWorld collisionWorld;
+
+            public void Execute(Entity entity, int index, ref NavAgent agent) {
+                var origin = agent.position + new float3(0, 0.5f, 0);
+                var direction = agent.currentWaypoint - origin;
+
+                var doAvoid = true;
+                var avoidDir = direction;
+
+                for (int j = 0; j < 4; j++) {
+                    var dir = Quaternion.AngleAxis(-30 + j * 30, Vector3.up) * direction;
+                    dir.Normalize();
+                    dir *= 2f;
+                    RaycastInput input = new RaycastInput {
+                        Start = origin,
+                        End = origin + (float3) dir,
+                        Filter = CollisionFilter.Default
+                    };
+
+                    var hits = new NativeList<RaycastHit>(Allocator.Temp);
+
+                    collisionWorld.CastRay(input, ref hits);
+                    
+                    if (hits.Length <= 1) {
+                        if (index == 0)
+                            doAvoid = false;
+                        break;
+                    }
+                    avoidDir = hits[0].Position - origin;
+
+                    hits.Dispose();
+                }
+
+                if (doAvoid) {
+
+                    if (avoidDir.Equals(float3.zero)) {
+                        avoidDir = direction;
+                    }
+
+                    avoidDir = ((Vector3) avoidDir).normalized;
+                    avoidDir.y = 0;
+                    avoidDir *= 1.1f;
+
+                    agent.nextPosition = agent.position + avoidDir * agent.currentMoveSpeed * dt;
                 }
             }
         }
@@ -86,7 +141,7 @@ namespace NavJob.Systems {
                     agent.currentMoveSpeed =
                         Mathf.Lerp(agent.currentMoveSpeed, agent.moveSpeed, dt * agent.acceleration);
                     // todo: deceleration
-                    if (agent.nextPosition.x != Mathf.Infinity) {
+                    if (!float.IsPositiveInfinity(agent.nextPosition.x)) {
                         agent.position = agent.nextPosition;
                     }
 
@@ -94,7 +149,7 @@ namespace NavJob.Systems {
                     agent.remainingDistance = heading.magnitude;
                     if (agent.remainingDistance > 0.001f) {
                         var targetRotation = Quaternion.LookRotation(heading, up).eulerAngles;
-                        //targetRotation.x = targetRotation.z = 0;
+                        targetRotation.x = targetRotation.z = 0;
                         if (agent.remainingDistance < 1) {
                             agent.rotation = Quaternion.Euler(targetRotation);
                         }
@@ -122,8 +177,13 @@ namespace NavJob.Systems {
 
         protected override JobHandle OnUpdate(JobHandle inputDeps) {
             var dt = Time.DeltaTime;
+            var count = navAgentQuery.CalculateEntityCount();
+            var buildPhysicsWorld = World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>();
+            var collisionWorld = buildPhysicsWorld.PhysicsWorld.CollisionWorld;
+
             inputDeps = new DetectNextWaypointJob {navMeshQuerySystemVersion = querySystem.Version}.Schedule(this, inputDeps);
             inputDeps = new SetNextWaypointJob().Schedule(this, inputDeps);
+            inputDeps = new localAvoidanceCheck {dt = dt, collisionWorld = collisionWorld}.Schedule(this, JobHandle.CombineDependencies(inputDeps, buildPhysicsWorld.FinalJobHandle));
             inputDeps = new MovementJob(dt).Schedule(this, inputDeps);
             return inputDeps;
         }
