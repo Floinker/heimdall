@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ public class TowerFire : DefenceObject
     {
         base.Start();
         currentTime = fireSpeed;
-        target = GameObject.Find("TestTarget");
+        target = GameObject.Find("TestTarget").transform.position;
         foreach (Transform child in transform)
         {
             if (child.name == "ProjectileStart")
@@ -27,14 +28,13 @@ public class TowerFire : DefenceObject
         }
     }
 
-    // Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
+    private void OnDrawGizmos() {
+        Gizmos.DrawSphere(target, 1f);
     }
 
     private void FixedUpdate()
     {
+        
         if (IsPlaced())
         {
             currentTime += Time.deltaTime;
@@ -48,13 +48,11 @@ public class TowerFire : DefenceObject
         
     }
 
-    public GameObject GetTarget()
-    {
-        return this.target;
-    }
-
     void ShootFireBall()
     {
-        Instantiate(fireballPrefab, new Vector3(projectileStart.position.x, projectileStart.position.y, projectileStart.position.z), Quaternion.identity, transform);
+        var projectile = Instantiate(fireballPrefab, new Vector3(projectileStart.position.x, projectileStart.position.y, projectileStart.position.z), Quaternion.identity, transform);
+
+        //var dir = target - this.transform.position;
+        projectile.GetComponent<GenericProjectile>().target = target;
     }
 }

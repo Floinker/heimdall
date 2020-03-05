@@ -37,9 +37,15 @@ public class ObjectPlacement : MonoBehaviour
 
         if (isPlacing)
         {
+            if (selectedObject != null)
+            {
+                selectedObject.GetComponent<DefenceObject>().SetSelected(false);
+                selectedObject = null;
+            }
+
             if (Input.GetButtonDown("Fire1"))
             {
-                if(tower && tower.GetComponent<DefenceObject>().CanPlace())
+                if(tower && tower.GetComponent<DefenceObject>().CanPlace() && tower.GetComponent<DefenceObject>().CanAfford())
                 {
                     InstantiateHoldingObject();
                 }
@@ -137,10 +143,10 @@ public class ObjectPlacement : MonoBehaviour
     void InstantiateHoldingObject()
     {
 
-        if (tower)
+        if (tower && GetComponent<PlayerStats>().playerCoins >= tower.GetComponent<DefenceObject>().upgrades[tower.GetComponent<DefenceObject>().currentLevel].cost)
         {
             
-            GetComponent<PlayerStats>().playerCoins -= tower.GetComponent<DefenceObject>().upgrades[tower.GetComponent<DefenceObject>().currentLevel].cost;
+            
             tower.GetComponent<DefenceObject>().setIsPlaced(true);
         }
 
@@ -155,6 +161,8 @@ public class ObjectPlacement : MonoBehaviour
             {
                 Vector3 point = hit.point;
            
+                if(tower != null)
+                    GetComponent<PlayerStats>().playerCoins -= tower.GetComponent<DefenceObject>().upgrades[tower.GetComponent<DefenceObject>().currentLevel].cost;
                 tower = Instantiate(towerPrefabs[currentPrefab], point, Quaternion.identity);
                 tower.GetComponent<DefenceObject>().SetCanPlace(true);
             }
@@ -188,6 +196,10 @@ public class ObjectPlacement : MonoBehaviour
         if (isPlacing)
         {
             Destroy(tower);
+        }
+        else
+        {
+            InstantiateHoldingObject();
         }
         isPlacing = !isPlacing;
     }

@@ -8,13 +8,12 @@ public class GenericProjectile : MonoBehaviour
     public GameObject impactPrefab;
     public List<GameObject> trails;
 
-    protected GameObject target;
+    public Vector3 target;
     protected Rigidbody rb;
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        target = FindTarget();
-        RotateTo(gameObject, target.transform.position);
+        RotateTo(gameObject, target);
         rb = GetComponent<Rigidbody>();
     }
 
@@ -23,9 +22,9 @@ public class GenericProjectile : MonoBehaviour
     {
         if (speed != 0 && rb != null && transform.parent.gameObject.GetComponent<TowerFire>().IsPlaced())
         {
-            RotateTo(gameObject, target.transform.position);
+            RotateTo(gameObject, target);
             float step = speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, target.transform.position, step);
+            transform.position = Vector3.MoveTowards(transform.position, target, step);
         }
     }
 
@@ -34,11 +33,6 @@ public class GenericProjectile : MonoBehaviour
         var direction = target - obj.transform.position;
         var rotation = Quaternion.LookRotation(direction);
         obj.transform.localRotation = Quaternion.Lerp(obj.transform.rotation, rotation, 1 * Time.deltaTime);
-    }
-
-    GameObject FindTarget()
-    {
-        return transform.root.GetComponent<DefenceObject>().GetTarget();
     }
 
     protected virtual void OnCollisionEnter(Collision collision)

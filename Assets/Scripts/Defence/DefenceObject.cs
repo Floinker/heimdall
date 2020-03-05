@@ -11,6 +11,7 @@ public class DefenceObject : MonoBehaviour
     //UI
     public GameObject uiPrefab;
     private GameObject uiInstance;
+    public float range;
     protected Button levelUpButton;
     protected Button destroyButton;
     
@@ -25,7 +26,7 @@ public class DefenceObject : MonoBehaviour
     private GameObject[] childObjects;
     private Dictionary<GameObject, Material> materialMapping;
 
-    protected GameObject target;
+    public Vector3 target;
 
     public Material highlightMat;
 
@@ -35,6 +36,7 @@ public class DefenceObject : MonoBehaviour
     private bool isPlaced = false;
     private bool canPlace = false;
     private bool isSelected = false;
+    private bool canAfford = false;
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -75,7 +77,9 @@ public class DefenceObject : MonoBehaviour
             {
                 childObjects[i] = child.gameObject;
                 materialMapping.Add(childObjects[i], childObjects[i].GetComponent<Renderer>().material);
+                Texture baseTexture = childObjects[i].GetComponent<Renderer>().material.mainTexture;
                 childObjects[i].GetComponent<Renderer>().material = highlightMat;
+                childObjects[i].GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
                 i++;
             }
             int j = 0;
@@ -86,7 +90,9 @@ public class DefenceObject : MonoBehaviour
                 {
                     childObjects[i + j] = grandchild.gameObject;
                     materialMapping.Add(childObjects[i+j], childObjects[i + j].GetComponent<Renderer>().material);
+                    Texture baseTexture = childObjects[i + j].GetComponent<Renderer>().material.mainTexture;
                     childObjects[i + j].GetComponent<Renderer>().material = highlightMat;
+                    childObjects[i + j].GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
                     j++;
                 }
                
@@ -107,7 +113,15 @@ public class DefenceObject : MonoBehaviour
         destroyButton = new List<Button>(levelUpButton.GetComponentsInChildren<Button>()).Find(img => img != levelUpButton);
         destroyButton.onClick.AddListener(DestroyObject); 
         tooltipText = uiInstance.GetComponentInChildren<Text>();
-        tooltipText.text = upgrades[currentLevel + 1].upgrade.description;
+        if(currentLevel < upgrades.Capacity - 1)
+        {
+            tooltipText.text = upgrades[currentLevel + 1].upgrade.description;
+        }
+        else
+        {
+            tooltipText.text = "Max Level reached";
+        }
+        
         tooltipText.color = new Color(0, 0, 0, 0);
         tooltipText.transform.parent.gameObject.GetComponent<Image>().color = new Color(0, 0, 0, 0);
         //tooltipText.transform.parent.gameObject.SetActive(false);
@@ -129,12 +143,14 @@ public class DefenceObject : MonoBehaviour
             {
                 if (go.GetComponent<Renderer>())
                 {
-                    
+
                     if (isSelected)
                     {
                         uiInstance.SetActive(true);
                         go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                        Texture baseTexture = materialMapping[go].mainTexture;
                         go.GetComponent<Renderer>().material = highlightMat;
+                        go.GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
                         go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 0f, 1f, 0.5f));
                     }
                     else
@@ -154,7 +170,7 @@ public class DefenceObject : MonoBehaviour
         {
             foreach (GameObject go in childObjects)
             {
-                if (canPlace)
+                if (canPlace && canAfford)
                 {
                     go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
                 }
@@ -163,6 +179,15 @@ public class DefenceObject : MonoBehaviour
                     go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
                 }
             }
+
+            if(upgrades[currentLevel].cost <= playerStats.playerCoins)
+            {
+                canAfford = true;
+            }
+            else
+            {
+                canAfford = false;
+            }
             
         }
     }
@@ -170,14 +195,16 @@ public class DefenceObject : MonoBehaviour
     void LevelUp()
     {
 
-        Debug.Log("Level Up!" + transform.name);
-        if (playerStats.playerCoins >= upgrades[currentLevel + 1].cost && currentLevel < upgrades.Capacity - 1) 
-        {
-            currentLevel++;
-            playerStats.playerCoins -= upgrades[currentLevel].cost;
-            GameObject temp = Instantiate(upgradePrefabs[currentLevel], transform.position, Quaternion.identity);
-            temp.GetComponent<DefenceObject>().setIsPlaced(true);
-            DestroyObject();
+       if(currentLevel < upgrades.Capacity - 1) { 
+           if (playerStats.playerCoins >= upgrades[currentLevel + 1].cost && currentLevel < upgrades.Capacity - 1) 
+           {
+               Debug.Log("Level Up!" + transform.name);
+               currentLevel++;
+               playerStats.playerCoins -= upgrades[currentLevel].cost;
+               GameObject temp = Instantiate(upgradePrefabs[currentLevel], transform.position, Quaternion.identity);
+               temp.GetComponent<DefenceObject>().setIsPlaced(true);     
+               DestroyObject();
+            }
         }
     }
 
@@ -198,7 +225,7 @@ public class DefenceObject : MonoBehaviour
             foreach (GameObject go in childObjects)
             {
                 if (go.GetComponent<Renderer>()) { 
-                    go.GetComponent<Renderer>().material = highlightMat;
+                    //go.GetComponent<Renderer>().material = highlightMat;
                     go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
                 }
             }
@@ -215,7 +242,7 @@ public class DefenceObject : MonoBehaviour
             {
                 if (go.GetComponent<Renderer>() != null)
                 {
-                    go.GetComponent<Renderer>().material = highlightMat;
+                    //go.GetComponent<Renderer>().material = highlightMat;
                     go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
                 }
             }
@@ -242,7 +269,12 @@ public class DefenceObject : MonoBehaviour
         this.canPlace = canPlace;
     }
 
-    public GameObject GetTarget()
+    public bool CanAfford()
+    {
+        return canAfford;
+    }
+
+    public Vector3 GetTarget()
     {
         return target;
     }

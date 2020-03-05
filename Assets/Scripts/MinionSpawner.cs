@@ -8,11 +8,11 @@ using UnityEngine;
 
 public class MinionSpawner : MonoBehaviour {
     [SerializeField] private GameObject minionPrefab;
-    [SerializeField] private GameObject squadLeader;
     [SerializeField] private GameObject targetObject;
     [SerializeField] private int countX;
     [SerializeField] private int countY;
     [SerializeField] private float spacing;
+    [SerializeField] private int delay;
 
 
     private Entity entityPrefab;
@@ -31,7 +31,7 @@ public class MinionSpawner : MonoBehaviour {
 
     private void FixedUpdate() {
         counter++;
-        if (counter == 10) {
+        if (counter % delay == 0) {
             spawnMinionGroup(this.transform.position, countX, countY, spacing);
         }
     }
@@ -69,19 +69,8 @@ public class MinionSpawner : MonoBehaviour {
         entityManager.AddComponent(entity, typeof(SyncPositionFromNavAgent));
         entityManager.AddComponent(entity, typeof(SyncRotationFromNavAgent));
 
-//        var boxCollider = Unity.Physics.BoxCollider.Create(new BoxGeometry() {
-//                Center = new float3(0, 1, 0),
-//                Size = new float3(1, 2, 1),
-//                Orientation = Quaternion.identity
-//            }
-//        );
-//        
-//        entityManager.AddComponent(entity, typeof(PhysicsCollider));
-//        entityManager.SetComponentData(entity, new PhysicsCollider() {Value = boxCollider});
-
         entityManager.SetComponentData(entity, new MinionData() {
-            trackedID = squadLeader.GetInstanceID(),
-            initialOffset = (float3) targetPosition - position
+            isDead = false
         });
 
         NavAgentSystem.SetDestinationStatic(entity, entityManager.GetComponentData<NavAgent>(entity), targetPosition,

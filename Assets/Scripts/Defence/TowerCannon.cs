@@ -16,7 +16,7 @@ public class TowerCannon : DefenceObject
     protected override void Start()
     {
         base.Start();
-        target = GameObject.Find("TestTarget");
+        
         currentTime = fireSpeed;
         foreach (Transform child in transform)
         {
@@ -35,19 +35,16 @@ public class TowerCannon : DefenceObject
         }
     }
 
-    // Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-    }
-
     private void FixedUpdate()
     {
         if (IsPlaced())
         {
-            RotateTo(topGameObject, target.transform.position);
+            RotateTo(topGameObject, target);
 
             currentTime += Time.deltaTime;
+            
+            if (target == Vector3.zero)
+                return;
             if(currentTime > fireSpeed)
             {
                 currentTime = 0;
@@ -70,9 +67,10 @@ public class TowerCannon : DefenceObject
     {
         GameObject cb = Instantiate(cannonBall, new Vector3(projectileStart.position.x, projectileStart.position.y, projectileStart.position.z), Quaternion.identity, projectileStart);
 
-        var direction = target.transform.position - cb.transform.position;
+        var direction = target - cb.transform.position;
         var rotation = Quaternion.LookRotation(direction);
 
         cb.GetComponent<Rigidbody>().AddForce(projectileStart.forward * 1000f);
+        cb.GetComponent<GenericProjectile>().target = target;
     }
 }

@@ -4,6 +4,5 @@ using Unity.Mathematics;
 
 [GenerateAuthoringComponent]
 public struct MinionData : IComponentData {
-    public Int32 trackedID;
-    public float3 initialOffset;
+    public bool isDead;
 }

@@ -22,6 +22,7 @@ namespace NavJob.Components
         public float acceleration;
         public float rotationSpeed;
         public int areaMask;
+        public float animProgress;
         public float3 destination { get; set; }
         public float currentMoveSpeed { get; set; }
         public int queryVersion { get; set; }
@@ -63,6 +64,7 @@ namespace NavJob.Components
             nextWaypointIndex = 0;
             totalWaypoints = 0;
             dontWarp = false;
+            animProgress = 0;
         }
     }
 
