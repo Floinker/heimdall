@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 2163197803690407290}
   m_Layer: 8
   m_Name: TowerCannonLvL2
-  m_TagString: Untagged
+  m_TagString: Defense
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -157,20 +157,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9007acbc2bba2d46bc15ed668a75285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highlightMat: {fileID: 2100000, guid: 7478d6720a790ae448c7f3220fbcdcad, type: 2}
+  uiPrefab: {fileID: 8555660411562866397, guid: 056e8b3bdd19efe47a4f0a73e6a9f8d2,
+    type: 3}
+  surface: {fileID: 0}
+  range: 80
+  target: {x: 0, y: 0, z: 0}
   upgrades:
   - upgrade: {fileID: 11400000, guid: ca546aa538a0a85409e73394881debf6, type: 2}
     cost: 100
   - upgrade: {fileID: 11400000, guid: a81093b25d8837746af5dae86968a04f, type: 2}
     cost: 150
-  uiPrefab: {fileID: 8555660411562866397, guid: 056e8b3bdd19efe47a4f0a73e6a9f8d2,
-    type: 3}
-  range: 80
   currentLevel: 1
-  target: {x: 0, y: 0, z: 0}
-  highlightMat: {fileID: 2100000, guid: 7478d6720a790ae448c7f3220fbcdcad, type: 2}
-  cannonBall: {fileID: 872995183287915009, guid: d11b5f4eaecf85c46a4c6a48c53c9ad3,
+  projectile: {fileID: 872995183287915009, guid: d11b5f4eaecf85c46a4c6a48c53c9ad3,
     type: 3}
-  fireSpeed: 1
+  projectileStart: {fileID: 147348919774002005}
+  fireRate: 1
+  health: 100
 --- !u!1 &171538
 GameObject:
   m_ObjectHideFlags: 0

@@ -70,7 +70,7 @@ public class MinionSpawner : MonoBehaviour {
         entityManager.AddComponent(entity, typeof(SyncRotationFromNavAgent));
 
         entityManager.SetComponentData(entity, new MinionData() {
-            isDead = false
+            isRigidbody = false
         });
 
         NavAgentSystem.SetDestinationStatic(entity, entityManager.GetComponentData<NavAgent>(entity), targetPosition,

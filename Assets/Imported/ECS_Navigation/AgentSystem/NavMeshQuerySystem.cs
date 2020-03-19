@@ -347,6 +347,18 @@ namespace NavJob.Systems {
             return inputDeps;
         }
 
+        public static void updateWorld() {
+            instance.updateWorldNonStatic();
+        }
+
+        private void updateWorldNonStatic() {
+            Debug.Log("updating navmesh world");
+            world = NavMeshWorld.GetDefaultWorld();
+            locationQuery.Dispose();
+            locationQuery = new NavMeshQuery(world, Allocator.Persistent);
+            PurgeCache();
+        }
+
         protected override void OnCreate() {
             world = NavMeshWorld.GetDefaultWorld();
             locationQuery = new NavMeshQuery(world, Allocator.Persistent);

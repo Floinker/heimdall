@@ -39,7 +39,7 @@ namespace ECS.Systems {
             var hits = new NativeArray<RaycastHit>(count, Allocator.TempJob);
             var toDelete = new NativeArray<Entity>(count, Allocator.TempJob);
             var particlePositions = new NativeArray<float3>(count, Allocator.TempJob);
-
+            
             var layerName = LayerMask.NameToLayer("Defence");
 
             inputDeps = new setupRaycasts() {
@@ -52,14 +52,22 @@ namespace ECS.Systems {
             inputDeps = new processResults() {
                 hits = hits,
                 toDelete = toDelete,
-                hitPositions = particlePositions
+                hitPositions = particlePositions,
             }.Schedule(this, inputDeps);
             
             inputDeps.Complete();
 
             foreach (var elem in particlePositions) {
-                if (!elem.Equals(float3.zero))
+                if (!elem.Equals(float3.zero)) {
                     getParticle().doEmit(elem + new float3(0, 1, 0));
+                    ScoreDisplay.score++;
+                }
+            }
+
+            for (var i = 0; i < count; i++) {
+                if (toDelete[i] == Entity.Null) continue;
+                var damagable = hits[i].transform.GetComponent<IDamagable>();
+                damagable?.TakeDamage(1f);
             }
             
             entityManager.DestroyEntity(toDelete);
@@ -67,6 +75,7 @@ namespace ECS.Systems {
             toDelete.Dispose();
             particlePositions.Dispose();
             inputs.Dispose();
+            hits.Dispose();
 
             return inputDeps;
         }
@@ -88,7 +97,6 @@ namespace ECS.Systems {
         [BurstCompile]
         private struct processResults : IJobForEachWithEntity<Translation, MinionData, NavAgent> {
             
-            [DeallocateOnJobCompletion]
             [ReadOnly]
             internal NativeArray<RaycastHit> hits;
             
@@ -101,6 +109,9 @@ namespace ECS.Systems {
                     //has close target, do remove
                     toDelete[index] = entity;
                     hitPositions[index] = agent.position;
+                }
+                else {
+                    toDelete[index] = Entity.Null;
                 }
             }
         }

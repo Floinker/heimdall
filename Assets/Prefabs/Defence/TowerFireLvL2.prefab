@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 3693943781076029188}
   m_Layer: 8
   m_Name: TowerFireLvL2
-  m_TagString: Untagged
+  m_TagString: Defense
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -159,20 +159,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd30dd4b99e74124cbd70a79fb63e81a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highlightMat: {fileID: 2100000, guid: 7478d6720a790ae448c7f3220fbcdcad, type: 2}
+  uiPrefab: {fileID: 8555660411562866397, guid: 056e8b3bdd19efe47a4f0a73e6a9f8d2,
+    type: 3}
+  surface: {fileID: 0}
+  range: 80
+  target: {x: 0, y: 0, z: 0}
   upgrades:
   - upgrade: {fileID: 11400000, guid: b768322442c2cec44a88b58b9be6f916, type: 2}
     cost: 100
   - upgrade: {fileID: 11400000, guid: 92d8e5429cdc8274db771605fb25bf10, type: 2}
     cost: 150
-  uiPrefab: {fileID: 8555660411562866397, guid: 056e8b3bdd19efe47a4f0a73e6a9f8d2,
-    type: 3}
-  range: 80
   currentLevel: 1
-  target: {x: 0, y: 0, z: 0}
-  highlightMat: {fileID: 2100000, guid: 7478d6720a790ae448c7f3220fbcdcad, type: 2}
-  fireballPrefab: {fileID: 2012700457323413465, guid: c9bd76c3d5b1e4b43831739381efacfc,
+  projectile: {fileID: 2012700457323413465, guid: c9bd76c3d5b1e4b43831739381efacfc,
     type: 3}
-  fireSpeed: 1
+  projectileStart: {fileID: 5512889326813189905}
+  fireRate: 1
+  health: 100
   fireballSpeed: 30
 --- !u!1 &171538
 GameObject:
@@ -534,6 +537,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0
+  target: {x: 0, y: 0, z: 0}
   impactPrefab: {fileID: 0}
   trails: []
-  target: {x: 0, y: 0, z: 0}

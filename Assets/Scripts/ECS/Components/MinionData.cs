@@ -4,5 +4,5 @@ using Unity.Mathematics;
 
 [GenerateAuthoringComponent]
 public struct MinionData : IComponentData {
-    public bool isDead;
+    public bool isRigidbody;
 }
