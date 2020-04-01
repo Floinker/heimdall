@@ -14,13 +14,20 @@ public class ScoreDisplay : MonoBehaviour {
     private bool newHighscore = false;
 
     public static readonly string first = "1st";
-    
+    private Camera camera1;
+
     private void Update() {
         textComponent.text = score.ToString();
     }
 
     private void FixedUpdate() {
         writeScore();
+    }
+
+    private void Start() {
+        camera1 = Camera.main;
+        var lastScore = PlayerPrefs.GetInt(first, 0);
+        Debug.Log("last highscore: " + lastScore);
     }
 
     private void writeScore() {
@@ -30,9 +37,9 @@ public class ScoreDisplay : MonoBehaviour {
             if (!newHighscore) {
                 newHighscore = true;
                 firework.gameObject.SetActive(true);
-                
-                var hit = new RaycastHit();
-                Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 1000f,
+
+                var transform1 = camera1.transform;
+                Physics.Raycast(transform1.position, transform1.forward, out var hit, 1000f,
                     relevantLayer);
 
                 firework.transform.position = hit.point;

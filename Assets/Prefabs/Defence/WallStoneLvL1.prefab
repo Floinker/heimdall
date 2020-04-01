@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   highlightMat: {fileID: 2100000, guid: 7478d6720a790ae448c7f3220fbcdcad, type: 2}
+  dissolveMat: {fileID: 2100000, guid: 9efbf897356acf64bbd8279f0e8cdbb1, type: 2}
   uiPrefab: {fileID: 8555660411562866397, guid: 056e8b3bdd19efe47a4f0a73e6a9f8d2,
     type: 3}
   surface: {fileID: 0}

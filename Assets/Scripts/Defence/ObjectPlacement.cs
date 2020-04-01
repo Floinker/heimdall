@@ -16,6 +16,9 @@ public class ObjectPlacement : MonoBehaviour
     private GameObject tower;
     private GameObject selectedObject;
 
+    public Vector3 buildAreaSize;
+    public Vector3 buildAreaCenter;
+
     private Button toggleBuildingModeButton;
 
     public bool isPlacing = false;
@@ -98,7 +101,7 @@ public class ObjectPlacement : MonoBehaviour
             if (tower)
             {
                 RaycastHit hit = new RaycastHit();
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f, relevantLayer))
+                if (Camera.main != null && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000f, relevantLayer))
                 {
                     tower.transform.position = hit.point;
                 }
@@ -217,7 +220,6 @@ public class ObjectPlacement : MonoBehaviour
         if (tower)
         {
             tower.GetComponent<DefenceObject>().SetCanPlace(true);
-        }
-        
+        } 
     }
 }

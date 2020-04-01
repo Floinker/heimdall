@@ -7,6 +7,7 @@ using UnityEngine.AI;
 
 public class DefenceObject : MonoBehaviour {
     [Header("Configuration")] public Material highlightMat;
+    public Material dissolveMat;
     public GameObject uiPrefab;
     public NavMeshSurface surface;
     public float range;
@@ -21,7 +22,7 @@ public class DefenceObject : MonoBehaviour {
     private GameObject uiInstance;
 
     private List<GameObject> upgradePrefabs;
-    private Dictionary<GameObject, Material> materialMapping;
+    private Dictionary<GameObject, Material> highlightMaterialMapping;
 
     protected Button levelUpButton;
     protected Button destroyButton;
@@ -30,6 +31,7 @@ public class DefenceObject : MonoBehaviour {
     private PlayerStats playerStats;
 
     private bool isPlaced = false;
+    private bool isDissolved = false;
     private bool canPlace = false;
     private bool isSelected = false;
 
@@ -59,7 +61,7 @@ public class DefenceObject : MonoBehaviour {
         }
 
         childObjects = new GameObject[childCount];
-        materialMapping = new Dictionary<GameObject, Material>();
+        highlightMaterialMapping = new Dictionary<GameObject, Material>();
 
         highlightMat.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
 
@@ -68,10 +70,11 @@ public class DefenceObject : MonoBehaviour {
         foreach (Transform child in transform) {
             if (child.gameObject.GetComponent<Renderer>()) {
                 childObjects[i] = child.gameObject;
-                materialMapping.Add(childObjects[i], childObjects[i].GetComponent<Renderer>().material);
+                highlightMaterialMapping.Add(childObjects[i], childObjects[i].GetComponent<Renderer>().material);
                 Texture baseTexture = childObjects[i].GetComponent<Renderer>().material.mainTexture;
                 childObjects[i].GetComponent<Renderer>().material = highlightMat;
                 childObjects[i].GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
+
                 i++;
             }
 
@@ -79,7 +82,7 @@ public class DefenceObject : MonoBehaviour {
             foreach (Transform grandchild in child.transform) {
                 if (grandchild.gameObject.GetComponent<Renderer>()) {
                     childObjects[i + j] = grandchild.gameObject;
-                    materialMapping.Add(childObjects[i + j], childObjects[i + j].GetComponent<Renderer>().material);
+                    highlightMaterialMapping.Add(childObjects[i + j], childObjects[i + j].GetComponent<Renderer>().material);
                     Texture baseTexture = childObjects[i + j].GetComponent<Renderer>().material.mainTexture;
                     childObjects[i + j].GetComponent<Renderer>().material = highlightMat;
                     childObjects[i + j].GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
@@ -113,48 +116,69 @@ public class DefenceObject : MonoBehaviour {
     // Update is called once per frame
     protected virtual void Update() {
         if (isPlaced) {
-            if (!destroyButton) {
-                SetupUI();
-            }
 
-            uiInstance.transform.position =
-                Camera.main.WorldToScreenPoint(transform.position + new Vector3(0f, 0f, 0f));
+            if(!isDissolved)
+                ReverseDissolve();
 
-            foreach (GameObject go in childObjects) {
-                if (go.GetComponent<Renderer>()) {
-                    if (isSelected) {
-                        uiInstance.SetActive(true);
-                        go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                        Texture baseTexture = materialMapping[go].mainTexture;
-                        go.GetComponent<Renderer>().material = highlightMat;
-                        go.GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
-                        go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 0f, 1f, 0.5f));
-                    }
-                    else {
-                        uiInstance.SetActive(false);
-                        go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-                        go.GetComponent<Renderer>().material = materialMapping[go];
+            if (isDissolved)
+            {
+
+
+                if (!destroyButton)
+                {
+                    SetupUI();
+                }
+
+                uiInstance.transform.position =
+                    Camera.main.WorldToScreenPoint(transform.position + new Vector3(0f, 0f, 0f));
+
+                foreach (GameObject go in childObjects)
+                {
+                    if (go.GetComponent<Renderer>())
+                    {
+                        if (isSelected)
+                        {
+                            uiInstance.SetActive(true);
+                            go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                            Texture baseTexture = highlightMaterialMapping[go].mainTexture;
+                            go.GetComponent<Renderer>().material = highlightMat;
+                            go.GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
+                            go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 0f, 1f, 0.5f));
+                        }
+                        else
+                        {
+                            uiInstance.SetActive(false);
+                            go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                            go.GetComponent<Renderer>().material = highlightMaterialMapping[go];
+                        }
                     }
                 }
             }
         }
         else {
-            foreach (GameObject go in childObjects) {
-                if (canPlace && canAfford) {
-                    go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
+            
+                foreach (GameObject go in childObjects)
+                {
+                    if (canPlace && canAfford && isDissolved)
+                    {
+                        go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
+                    }
+                    else if (isDissolved)
+                    {
+                        go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
+                    }
                 }
-                else {
-                    go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
-                }
-            }
 
-            if (upgrades[currentLevel].cost <= playerStats.playerCoins) {
-                canAfford = true;
+                if (upgrades[currentLevel].cost <= playerStats.playerCoins)
+                {
+                    canAfford = true;
+                }
+                else
+                {
+                    canAfford = false;
+                }
             }
-            else {
-                canAfford = false;
-            }
-        }
+        
     }
 
     void LevelUp() {
@@ -168,6 +192,27 @@ public class DefenceObject : MonoBehaviour {
                 DestroyObject();
             }
         }
+    }
+
+    void ReverseDissolve()
+    {
+        foreach(GameObject go in childObjects)
+        {
+            Texture baseTexture = highlightMaterialMapping[go].mainTexture;
+            go.GetComponent<Renderer>().material = dissolveMat;
+            go.GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
+        }
+
+        float time = 10f;
+        while(time > 0)
+        {
+            time -= Time.deltaTime;
+            foreach(GameObject go in childObjects)
+            {
+                go.GetComponent<Renderer>().material.SetFloat("Dissolve", time);
+            }
+        }
+        isDissolved = true;
     }
 
     void DestroyObject() {

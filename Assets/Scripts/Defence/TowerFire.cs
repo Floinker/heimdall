@@ -7,12 +7,6 @@ public class TowerFire : Tower
 {
     public float fireballSpeed;
 
-    protected override void Start()
-    {
-        base.Start(); 
-        target = GameObject.Find("TestTarget").transform.position;
-    }
-
     private void OnDrawGizmos() {
         Gizmos.DrawSphere(target, 1f);
     }

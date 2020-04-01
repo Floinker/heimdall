@@ -8,7 +8,7 @@ public abstract class StaticObject : DefenceObject, IDamagable
     [Header("Static Defence-Object-Settings")]
     public float health = 100f;
 
-    private void FixedUpdate() {
+    protected virtual void FixedUpdate() {
         if (health <= 0) {
             GameObject.Destroy(this.gameObject);
             return;
