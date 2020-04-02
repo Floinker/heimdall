@@ -1,0 +1,103 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Analytics;
+using UnityEngine.SceneManagement;
+
+public class AnalyticsHelper : MonoBehaviour {
+
+    //@Timo:
+    static int fireTowersPlaced;
+    static int cannonTowersPlaced;
+    static int archersPlaced;
+    static int wallsPlaced;
+    public static int upgradesMade;
+
+    private static int lastHighscore;
+    
+    private void Start() {
+        Analytics.EnableCustomEvent("test", true);
+        lastHighscore = PlayerPrefs.GetInt(ScoreDisplay.first, 0);
+    }
+
+    public static void gameOverEvent() {
+        var score = ScoreDisplay.score;
+        var totalTime = Time.timeSinceLevelLoad;
+
+        AnalyticsEvent.GameOver(SceneManager.GetActiveScene().name, new Dictionary<string, object> {
+            {"score", score},
+            {"lastScore", lastHighscore},
+            {"fireTowers", fireTowersPlaced},
+            {"cannonTowers", cannonTowersPlaced},
+            {"archersTowers", archersPlaced},
+            {"walls", wallsPlaced},
+            {"upgrades", upgradesMade},
+            {"totalTime", totalTime},
+            {"fps", Time.renderedFrameCount / totalTime}
+        });
+
+//        AnalyticsEvent.Custom("test2", new Dictionary<string, object> {
+//            {"score", score},
+//            {"totalTime", totalTime}
+//        });
+
+        Analytics.FlushEvents();
+    }
+
+    public static void towerPlaced(string towerType, float distanceToBase)
+    {
+        switch (towerType)
+        {
+            case "Cannon":
+                cannonTowersPlaced++;
+                break;
+            case "Fire":
+                fireTowersPlaced++;
+                break;
+            case "Wall":
+                wallsPlaced++;
+                break;
+            case "Archer":
+                archersPlaced++;
+                break;
+            default:
+                break;
+        }
+
+        AnalyticsEvent.Custom("towerPlaced", new Dictionary<string, object> {
+            {"towerType", towerType},
+            {"distanceToBase", distanceToBase }
+        });
+    }
+
+    public static void towerUpgraded(string towerType, int toLevel)
+    {
+        upgradesMade++;
+        AnalyticsEvent.Custom("towerUpgraded", new Dictionary<string, object> {
+            {"towerType", towerType },
+            {"upgradedToLevel", toLevel }
+        });
+    }
+
+    public static void introSkipped(float skippedAt) {
+        AnalyticsEvent.CutsceneSkip(SceneManager.GetActiveScene().name, new Dictionary<string, object>() {
+            {"skippedAt", skippedAt}
+        });
+    }
+
+    public static void newHighscore() {
+        var score = ScoreDisplay.score;
+        var totalTime = Time.timeSinceLevelLoad;
+        
+        AnalyticsEvent.Custom("highscoreNew", new Dictionary<string, object> {
+            {"score", score},
+            {"lastScore", lastHighscore},
+            {"fireTowers", fireTowersPlaced},
+            {"cannonTowers", cannonTowersPlaced},
+            {"archersTowers", archersPlaced},
+            {"walls", wallsPlaced},
+            {"upgrades", upgradesMade},
+            {"totalTime", totalTime},
+            {"fps", Time.renderedFrameCount / totalTime}
+        });
+    }
+}

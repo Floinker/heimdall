@@ -141,7 +141,7 @@ MonoBehaviour:
   countX: 3
   countY: 1
   spacing: 1
-  delay: 15
+  delay: 10
 --- !u!1 &8014393792061137813
 GameObject:
   m_ObjectHideFlags: 0

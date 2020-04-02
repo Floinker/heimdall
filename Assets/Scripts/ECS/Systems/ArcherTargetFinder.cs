@@ -43,7 +43,7 @@ public class ArcherTargetFinder : JobComponentSystem {
         
         foreach (var elem in ArcherController.targetPositions) {
             var index = UnityEngine.Random.Range(0, useResults - 1);
-            newDict[elem.Key] = sortedResults[index].position + Vector3.up;
+            newDict[elem.Key] = sortedResults[index].position + Vector3.up + getRandOffset();
         }
 
         ArcherController.targetPositions = newDict;
@@ -51,6 +51,10 @@ public class ArcherTargetFinder : JobComponentSystem {
         results.Dispose();
 
         return inputDeps;
+    }
+
+    private Vector3 getRandOffset() {
+        return new Vector3(UnityEngine.Random.Range(-2f, 2f), 0, UnityEngine.Random.Range(-2f, 2f));
     }
 
     [BurstCompile]

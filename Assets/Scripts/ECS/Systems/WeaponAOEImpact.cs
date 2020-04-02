@@ -60,10 +60,6 @@ namespace ECS.Systems {
             impactPositions.Clear();
 
             foreach (var elem in impacted) {
-                //var pulse = elem.minionPos - elem.impactPos;
-                //pulse += Vector3.up * pulse.magnitude;
-                //pulse *= 50f;
-                //updateEntity(elem.entity, pulse, elem.impactPos);
                 entityManager.DestroyEntity(elem.entity);
                 getParticle().doEmit(elem.minionPos);
             }
@@ -72,43 +68,6 @@ namespace ECS.Systems {
             impacted.Dispose();
 
             return inputDeps;
-        }
-
-        private void updateEntity(Entity entity, float3 pulse, float3 point) {
-
-            if (!entityManager.Exists(entity)) return;
-            
-            entityManager.RemoveComponent<NavAgent>(entity);
-            entityManager.RemoveComponent<SyncPositionFromNavAgent>(entity);
-            entityManager.RemoveComponent<SyncRotationFromNavAgent>(entity);
-
-            entityManager.AddComponent<PhysicsMass>(entity);
-            entityManager.AddComponent<PhysicsVelocity>(entity);
-            entityManager.AddComponent<PhysicsDamping>(entity);
-            entityManager.AddComponent<PhysicsGravityFactor>(entity);
-
-            PhysicsCollider colliderPtr = entityManager.GetComponentData<PhysicsCollider>(entity);
-            var mass = PhysicsMass.CreateDynamic(colliderPtr.MassProperties, 50);
-
-            float3 angularVelocityLocal = new float3(0, 0, 0);
-            float3 linearVelocity = new float3(0, 0, 0);
-
-            var vel = new PhysicsVelocity() {
-                Linear = linearVelocity,
-                Angular = angularVelocityLocal
-            };
-            
-            ComponentExtensions.ApplyImpulse(ref vel, mass, entityManager.GetComponentData<Translation>(entity), entityManager.GetComponentData<Rotation>(entity), pulse, point);
-            
-            entityManager.SetComponentData(entity, mass);
-            entityManager.SetComponentData(entity, vel);
-            entityManager.SetComponentData(entity, new PhysicsDamping() {
-                Linear = 0.01f,
-                Angular = 0.05f
-            });
-            
-            entityManager.SetComponentData(entity, new PhysicsGravityFactor {Value = 9.81f});
-            
         }
 
         [BurstCompile]

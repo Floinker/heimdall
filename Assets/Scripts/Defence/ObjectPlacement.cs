@@ -148,8 +148,12 @@ public class ObjectPlacement : MonoBehaviour
 
         if (tower && GetComponent<PlayerStats>().playerCoins >= tower.GetComponent<DefenceObject>().upgrades[tower.GetComponent<DefenceObject>().currentLevel].cost)
         {
-            
-            
+            Transform playerBase = GameObject.Find("NavMeshTarget").transform;
+
+           
+            float distanceToBase = Vector3.Distance(tower.transform.position, playerBase.position);
+
+            AnalyticsHelper.towerPlaced(tower.GetComponent<DefenceObject>().GetTowerType(), distanceToBase);
             tower.GetComponent<DefenceObject>().setIsPlaced(true);
         }
 

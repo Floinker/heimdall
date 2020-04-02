@@ -16,8 +16,15 @@ public class ScoreDisplay : MonoBehaviour {
     public static readonly string first = "1st";
     private Camera camera1;
 
+    private int lastScore = 0;
+    private Animator animator;
+
     private void Update() {
-        textComponent.text = score.ToString();
+        if (score != lastScore) {
+            textComponent.text = score.ToString();
+            animator.SetTrigger("run");
+            lastScore = score;
+        }
     }
 
     private void FixedUpdate() {
@@ -25,6 +32,7 @@ public class ScoreDisplay : MonoBehaviour {
     }
 
     private void Start() {
+        animator = this.GetComponent<Animator>();
         camera1 = Camera.main;
         var lastScore = PlayerPrefs.GetInt(first, 0);
         Debug.Log("last highscore: " + lastScore);
@@ -35,6 +43,7 @@ public class ScoreDisplay : MonoBehaviour {
         if (score > lastScore) {
             PlayerPrefs.SetInt(first, score);
             if (!newHighscore) {
+                AnalyticsHelper.newHighscore();
                 newHighscore = true;
                 firework.gameObject.SetActive(true);
 

@@ -14,6 +14,7 @@ public class PlayerMainBase : MonoBehaviour, IDamagable {
 
     private void FixedUpdate() {
         if (health <= 0) {
+            onDeath();
             Destroy(gameObject);
         }
     }
@@ -23,6 +24,7 @@ public class PlayerMainBase : MonoBehaviour, IDamagable {
     }
 
     public virtual void onDeath() {
+        AnalyticsHelper.gameOverEvent();
         //to be implemented
     }
     

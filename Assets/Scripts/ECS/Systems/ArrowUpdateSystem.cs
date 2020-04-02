@@ -81,6 +81,8 @@ public class ArrowUpdateSyste : JobComponentSystem {
 
         public void Execute(Entity entity, int index, ref Translation pos, ref Rotation rot, ref ArrowData arrowData) {
             arrowData.progress += delta;
+            if (arrowData.progress >= 10f)
+                toDelete[index] = entity;
             
             if (arrowData.done) return;
             
@@ -132,9 +134,6 @@ public class ArrowUpdateSyste : JobComponentSystem {
             if (newPos.y <= arrowData.minY) {
                 arrowData.done = true;
             }
-
-            if (arrowData.progress >= 10f)
-                toDelete[index] = entity;
         }
     }
 }

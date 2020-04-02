@@ -18,7 +18,7 @@ public class DefenceObject : MonoBehaviour {
     public int currentLevel = 0;
 
     //
-    private GameObject[] childObjects;
+    private List<GameObject> childObjects;
     private GameObject uiInstance;
 
     private List<GameObject> upgradePrefabs;
@@ -60,35 +60,28 @@ public class DefenceObject : MonoBehaviour {
             }
         }
 
-        childObjects = new GameObject[childCount];
+        childObjects = new List<GameObject>();
         highlightMaterialMapping = new Dictionary<GameObject, Material>();
 
         highlightMat.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
 
-        int i = 0;
+        GetAllChildObjects(transform, childObjects);
+    }
 
-        foreach (Transform child in transform) {
-            if (child.gameObject.GetComponent<Renderer>()) {
-                childObjects[i] = child.gameObject;
-                highlightMaterialMapping.Add(childObjects[i], childObjects[i].GetComponent<Renderer>().material);
-                Texture baseTexture = childObjects[i].GetComponent<Renderer>().material.mainTexture;
-                childObjects[i].GetComponent<Renderer>().material = highlightMat;
-                childObjects[i].GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
-
-                i++;
+    private void GetAllChildObjects(Transform parent, List<GameObject> childList)
+    {
+        foreach(Transform child in parent)
+        {
+            Renderer r = null;
+            if ((r = child.GetComponent<Renderer>()) != null)
+            {
+                childList.Add(child.gameObject);
+                highlightMaterialMapping.Add(child.gameObject, r.material);
+                Texture baseTex = r.material.mainTexture;
+                r.material = highlightMat;
+                r.material.SetTexture("BaseTexture", baseTex);
             }
-
-            int j = 0;
-            foreach (Transform grandchild in child.transform) {
-                if (grandchild.gameObject.GetComponent<Renderer>()) {
-                    childObjects[i + j] = grandchild.gameObject;
-                    highlightMaterialMapping.Add(childObjects[i + j], childObjects[i + j].GetComponent<Renderer>().material);
-                    Texture baseTexture = childObjects[i + j].GetComponent<Renderer>().material.mainTexture;
-                    childObjects[i + j].GetComponent<Renderer>().material = highlightMat;
-                    childObjects[i + j].GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
-                    j++;
-                }
-            }
+            GetAllChildObjects(child, childList);
         }
     }
 
@@ -189,6 +182,9 @@ public class DefenceObject : MonoBehaviour {
                 playerStats.playerCoins -= upgrades[currentLevel].cost;
                 GameObject temp = Instantiate(upgradePrefabs[currentLevel], transform.position, Quaternion.identity);
                 temp.GetComponent<DefenceObject>().setIsPlaced(true);
+
+                AnalyticsHelper.towerUpgraded(GetTowerType(), currentLevel);
+
                 DestroyObject();
             }
         }
@@ -274,5 +270,33 @@ public class DefenceObject : MonoBehaviour {
 
     public void SetSelected(bool isSelected) {
         this.isSelected = isSelected;
+    }
+
+    public string GetTowerType()
+    {
+        string type = transform.name;
+
+        if (type.Contains("Cannon"))
+        {
+            type = "Cannon";
+        }
+        else if (type.Contains("Fire"))
+        {
+            type = "Fire";
+        }
+        else if (type.Contains("Wall"))
+        {
+            type = "Wall";
+        }
+        else if (type.Contains("Archer"))
+        {
+            type = "Archer";
+        }
+        else
+        {
+            type = "type not recognized";
+        }
+
+        return type;
     }
 }

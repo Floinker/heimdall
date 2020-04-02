@@ -9,6 +9,7 @@ public class ArcherController : MonoBehaviour {
     //bounds for arrow collision
     public float minY;
     public float maxY;
+    public Transform launcFrom;
 
     //gets updated by ArcherTargetFinder system
     public static Dictionary<ArcherController, Vector3> targetPositions = new Dictionary<ArcherController, Vector3>();
@@ -32,12 +33,17 @@ public class ArcherController : MonoBehaviour {
     
     private void FixedUpdate() {
         if (!targetPositions.ContainsKey(this)) return;
-        progress += Time.deltaTime;
 
-        if (progress > 1) {
-            progress = 0;
-            spawnArrow(this.transform.position);
-        }
+        var from = this.transform.position;
+        from.y = 250;
+        
+        var rot = targetPositions[this] - from;
+        var dir = Quaternion.LookRotation(rot);
+        this.transform.rotation = dir;
+    }
+
+    public void fireArrow() {
+        spawnArrow(launcFrom.position);
     }
     
     private void spawnArrow(float3 position) {

@@ -11,12 +11,12 @@ public class CameraController : MonoBehaviour {
 
     [Header("Bounds")] public Vector2 panLimit;
 
+    public void introAnimDone() {
+        this.GetComponent<Animator>().enabled = false;
+    }
+
     // Update is called once per frame
     void Update() {
-
-        if (Time.timeSinceLevelLoad > 14.5 && !disabled) {
-            this.GetComponent<Animator>().enabled = false;
-        }
         
         Vector3 pos = transform.position;
         var oldY = pos.y;
