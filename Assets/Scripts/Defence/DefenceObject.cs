@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.AI;
+using Unity.Jobs;
 
 public class DefenceObject : MonoBehaviour {
     [Header("Configuration")] public Material highlightMat;
@@ -22,7 +23,7 @@ public class DefenceObject : MonoBehaviour {
     private GameObject uiInstance;
 
     private List<GameObject> upgradePrefabs;
-    private Dictionary<GameObject, Material> highlightMaterialMapping;
+    private Dictionary<GameObject, Material> materialMapping;
 
     protected Button levelUpButton;
     protected Button destroyButton;
@@ -37,9 +38,13 @@ public class DefenceObject : MonoBehaviour {
 
     private bool canAfford = false;
 
+    private float lerpTime = 0.0f;
+    private int collisionCount;
+
     // Start is called before the first frame update
     protected virtual void Start() {
         int childCount = 0;
+        collisionCount = 0;
         playerStats = FindObjectOfType<PlayerStats>();
         upgradePrefabs = new List<GameObject>();
 
@@ -61,7 +66,7 @@ public class DefenceObject : MonoBehaviour {
         }
 
         childObjects = new List<GameObject>();
-        highlightMaterialMapping = new Dictionary<GameObject, Material>();
+        materialMapping = new Dictionary<GameObject, Material>();
 
         highlightMat.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
 
@@ -76,7 +81,7 @@ public class DefenceObject : MonoBehaviour {
             if ((r = child.GetComponent<Renderer>()) != null)
             {
                 childList.Add(child.gameObject);
-                highlightMaterialMapping.Add(child.gameObject, r.material);
+                materialMapping.Add(child.gameObject, r.material);
                 Texture baseTex = r.material.mainTexture;
                 r.material = highlightMat;
                 r.material.SetTexture("BaseTexture", baseTex);
@@ -108,15 +113,30 @@ public class DefenceObject : MonoBehaviour {
 
     // Update is called once per frame
     protected virtual void Update() {
+        Debug.Log(isDissolved);
         if (isPlaced) {
 
-            if(!isDissolved)
-                ReverseDissolve();
-
-            if (isDissolved)
+            if (!isDissolved)
             {
+                lerpTime += 0.5f * Time.deltaTime;
+                float lerpVal = 0; ;
+                foreach (GameObject go in childObjects)
+                {
+                    
+                    Texture baseTexture = materialMapping[go].mainTexture;
+                    go.GetComponent<Renderer>().material = dissolveMat;
+                    go.GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
+                    lerpVal = Mathf.Lerp(1, 0, lerpTime);
+                    go.GetComponent<Renderer>().material.SetFloat("Dissolve", lerpVal);
+                }
 
+                if (lerpVal == 0)
+                    isDissolved = true;
+               
+            }
+               
 
+            if (isDissolved) { 
                 if (!destroyButton)
                 {
                     SetupUI();
@@ -133,7 +153,7 @@ public class DefenceObject : MonoBehaviour {
                         {
                             uiInstance.SetActive(true);
                             go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                            Texture baseTexture = highlightMaterialMapping[go].mainTexture;
+                            Texture baseTexture = materialMapping[go].mainTexture;
                             go.GetComponent<Renderer>().material = highlightMat;
                             go.GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
                             go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 0f, 1f, 0.5f));
@@ -142,35 +162,59 @@ public class DefenceObject : MonoBehaviour {
                         {
                             uiInstance.SetActive(false);
                             go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-                            go.GetComponent<Renderer>().material = highlightMaterialMapping[go];
+                            go.GetComponent<Renderer>().material = materialMapping[go];
                         }
                     }
                 }
             }
         }
         else {
-            
+            if (collisionCount < 1){
+                canPlace = true;
                 foreach (GameObject go in childObjects)
                 {
-                    if (canPlace && canAfford && isDissolved)
+                    if (go.GetComponent<Renderer>() != null)
                     {
+                        //go.GetComponent<Renderer>().material = highlightMat;
                         go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
                     }
-                    else if (isDissolved)
+                }
+            }
+            else{
+                canPlace = false;
+                foreach (GameObject go in childObjects)
+                {
+                    if (go.GetComponent<Renderer>())
                     {
+                        //go.GetComponent<Renderer>().material = highlightMat;
                         go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
                     }
                 }
+            }
 
-                if (upgrades[currentLevel].cost <= playerStats.playerCoins)
+            foreach (GameObject go in childObjects)
+            {
+                if (canPlace && canAfford && isDissolved)
                 {
-                    canAfford = true;
+                    go.GetComponent<Renderer>().material = highlightMat;
+                    go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
                 }
-                else
+                else if (isDissolved)
                 {
-                    canAfford = false;
+                    go.GetComponent<Renderer>().material = highlightMat;
+                    go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
                 }
             }
+
+            if (upgrades[currentLevel].cost <= playerStats.playerCoins)
+            {
+                canAfford = true;
+            }
+            else
+            {
+                canAfford = false;
+            }
+        }
         
     }
 
@@ -190,27 +234,6 @@ public class DefenceObject : MonoBehaviour {
         }
     }
 
-    void ReverseDissolve()
-    {
-        foreach(GameObject go in childObjects)
-        {
-            Texture baseTexture = highlightMaterialMapping[go].mainTexture;
-            go.GetComponent<Renderer>().material = dissolveMat;
-            go.GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
-        }
-
-        float time = 10f;
-        while(time > 0)
-        {
-            time -= Time.deltaTime;
-            foreach(GameObject go in childObjects)
-            {
-                go.GetComponent<Renderer>().material.SetFloat("Dissolve", time);
-            }
-        }
-        isDissolved = true;
-    }
-
     void DestroyObject() {
         Destroy(uiInstance);
         Destroy(gameObject);
@@ -218,29 +241,21 @@ public class DefenceObject : MonoBehaviour {
 
 
     private void OnTriggerEnter(Collider other) {
+        collisionCount++;
         //TODO Check auf Layer
         canPlace = false;
 
         if (!isPlaced) {
-            foreach (GameObject go in childObjects) {
-                if (go.GetComponent<Renderer>()) {
-                    //go.GetComponent<Renderer>().material = highlightMat;
-                    go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
-                }
-            }
+            
         }
     }
 
 
     private void OnTriggerExit(Collider other) {
+        collisionCount--;
         canPlace = true;
         if (!isPlaced) {
-            foreach (GameObject go in childObjects) {
-                if (go.GetComponent<Renderer>() != null) {
-                    //go.GetComponent<Renderer>().material = highlightMat;
-                    go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
-                }
-            }
+            
         }
     }
 

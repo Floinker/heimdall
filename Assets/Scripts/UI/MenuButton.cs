@@ -49,6 +49,5 @@ public class MenuButton : MonoBehaviour {
 
     public void playPressed() {
         print("play pressed in main menu!");
-        SceneManager.LoadScene(1);
     }
 }
