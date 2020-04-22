@@ -25,4 +25,9 @@ public class GameLoader : MonoBehaviour
             yield return null;
         }
     }
+
+    public void LoadScene(int sceneIndex)
+    {
+        SceneManager.LoadScene(sceneIndex);
+    }
 }

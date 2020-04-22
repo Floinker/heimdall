@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -358,6 +358,89 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &308062015 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4369065082735945917, guid: 223215bdc78e5c44daaf61293e8714e0,
+    type: 3}
+  m_PrefabInstance: {fileID: 503038498}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &308062016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308062015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 894072855}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 308062019}
+        m_MethodName: startPlayAnimManual
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 285644460}
+        m_MethodName: LoadScene
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &308062019 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1120576110, guid: 223215bdc78e5c44daaf61293e8714e0,
+    type: 3}
+  m_PrefabInstance: {fileID: 503038498}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308062015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8315e62dc3b4d2145be838f0b468f5a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &448909448
 GameObject:
   m_ObjectHideFlags: 0
@@ -609,7 +692,7 @@ PrefabInstance:
     - target: {fileID: 4369065082735945914, guid: 223215bdc78e5c44daaf61293e8714e0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 365
+      value: 696
       objectReference: {fileID: 0}
     - target: {fileID: 4369065082735945914, guid: 223215bdc78e5c44daaf61293e8714e0,
         type: 3}
@@ -829,7 +912,7 @@ PrefabInstance:
     - target: {fileID: 4369065082735945914, guid: 223215bdc78e5c44daaf61293e8714e0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 638
+      value: 969
       objectReference: {fileID: 0}
     - target: {fileID: 4369065082735945914, guid: 223215bdc78e5c44daaf61293e8714e0,
         type: 3}
@@ -986,6 +1069,18 @@ RectTransform:
   m_AnchoredPosition: {x: -0.20000458, y: 220.00002}
   m_SizeDelta: {x: 689.80005, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &894072855 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4449160728563609267, guid: 223215bdc78e5c44daaf61293e8714e0,
+    type: 3}
+  m_PrefabInstance: {fileID: 503038498}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &917620540 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4369065082735945914, guid: 223215bdc78e5c44daaf61293e8714e0,
@@ -1123,7 +1218,8 @@ AudioSource:
   m_GameObject: {fileID: 921093996}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 2111523848909927193, guid: 29e2f7d7ad29919449c2d805d7a4f030,
+    type: 2}
   m_audioClip: {fileID: 8300000, guid: b959a2a3489e8e94ab0d387f74cac4e3, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -1298,7 +1394,7 @@ PrefabInstance:
     - target: {fileID: 4369065082735945914, guid: 223215bdc78e5c44daaf61293e8714e0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 97
+      value: 428
       objectReference: {fileID: 0}
     - target: {fileID: 4369065082735945914, guid: 223215bdc78e5c44daaf61293e8714e0,
         type: 3}
@@ -1722,7 +1818,8 @@ AudioSource:
   m_GameObject: {fileID: 1770091962}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -3316402753799220650, guid: 29e2f7d7ad29919449c2d805d7a4f030,
+    type: 2}
   m_audioClip: {fileID: 8300000, guid: d129017fbf5022040b02f34149f77fdd, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
