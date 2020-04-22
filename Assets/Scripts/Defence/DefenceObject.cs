@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.AI;
 using Unity.Jobs;
+using System;
 
 public class DefenceObject : MonoBehaviour {
-    [Header("Configuration")] public Material highlightMat;
+    [Header("Configuration")]
+    public AudioSource placeSound;
+    public AudioSource shootSound;
+    public Material highlightMat;
     public Material dissolveMat;
     public GameObject uiPrefab;
     public NavMeshSurface surface;
@@ -41,8 +46,14 @@ public class DefenceObject : MonoBehaviour {
     private float lerpTime = 0.0f;
     private int collisionCount;
 
+    //Analytics
+    private Guid guid;
+
     // Start is called before the first frame update
     protected virtual void Start() {
+        guid = System.Guid.NewGuid();
+        Debug.Log(guid);
+
         int childCount = 0;
         collisionCount = 0;
         playerStats = FindObjectOfType<PlayerStats>();
@@ -113,8 +124,14 @@ public class DefenceObject : MonoBehaviour {
 
     // Update is called once per frame
     protected virtual void Update() {
-        Debug.Log(isDissolved);
         if (isPlaced) {
+
+            if (placeSound != null)
+            {
+                placeSound.Play(0);
+                placeSound = null;
+            }
+                
 
             if (!isDissolved)
             {
@@ -156,13 +173,15 @@ public class DefenceObject : MonoBehaviour {
                             Texture baseTexture = materialMapping[go].mainTexture;
                             go.GetComponent<Renderer>().material = highlightMat;
                             go.GetComponent<Renderer>().material.SetTexture("BaseTexture", baseTexture);
-                            go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 0f, 1f, 0.5f));
+                            go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 0f, 1f, 0.2f));
+                            go.GetComponent<Renderer>().material.SetFloat("alphaValue", .3f);
                         }
                         else
                         {
                             uiInstance.SetActive(false);
                             go.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                             go.GetComponent<Renderer>().material = materialMapping[go];
+                            go.GetComponent<Renderer>().material.SetFloat("alphaValue", 1f);
                         }
                     }
                 }
@@ -177,6 +196,7 @@ public class DefenceObject : MonoBehaviour {
                     {
                         //go.GetComponent<Renderer>().material = highlightMat;
                         go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
+                        go.GetComponent<Renderer>().material.SetFloat("alphaValue", .3f);
                     }
                 }
             }
@@ -188,6 +208,7 @@ public class DefenceObject : MonoBehaviour {
                     {
                         //go.GetComponent<Renderer>().material = highlightMat;
                         go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
+                        go.GetComponent<Renderer>().material.SetFloat("alphaValue", .3f);
                     }
                 }
             }
@@ -198,11 +219,13 @@ public class DefenceObject : MonoBehaviour {
                 {
                     go.GetComponent<Renderer>().material = highlightMat;
                     go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(0f, 1f, 0f, 0.5f));
+                    go.GetComponent<Renderer>().material.SetFloat("alphaValue", .3f);
                 }
                 else if (isDissolved)
                 {
                     go.GetComponent<Renderer>().material = highlightMat;
                     go.GetComponent<Renderer>().material.SetColor("Color_Highlight", new Color(1f, 0f, 0f, 0.5f));
+                    go.GetComponent<Renderer>().material.SetFloat("alphaValue", .3f);
                 }
             }
 
@@ -227,7 +250,7 @@ public class DefenceObject : MonoBehaviour {
                 GameObject temp = Instantiate(upgradePrefabs[currentLevel], transform.position, Quaternion.identity);
                 temp.GetComponent<DefenceObject>().setIsPlaced(true);
 
-                AnalyticsHelper.towerUpgraded(GetTowerType(), currentLevel);
+                AnalyticsHelper.towerUpgraded(GetTowerType(), currentLevel, this);
 
                 DestroyObject();
             }
@@ -287,6 +310,10 @@ public class DefenceObject : MonoBehaviour {
         this.isSelected = isSelected;
     }
 
+    public bool IsSelected()
+    {
+        return this.isSelected;
+    }
     public string GetTowerType()
     {
         string type = transform.name;
@@ -313,5 +340,10 @@ public class DefenceObject : MonoBehaviour {
         }
 
         return type;
+    }
+
+    public Guid getGUID()
+    {
+        return this.guid;
     }
 }

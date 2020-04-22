@@ -15,7 +15,6 @@ public class AnalyticsHelper : MonoBehaviour {
     private static int lastHighscore;
     
     private void Start() {
-        Analytics.EnableCustomEvent("test", true);
         lastHighscore = PlayerPrefs.GetInt(ScoreDisplay.first, 0);
     }
 
@@ -24,26 +23,22 @@ public class AnalyticsHelper : MonoBehaviour {
         var totalTime = Time.timeSinceLevelLoad;
 
         AnalyticsEvent.GameOver(SceneManager.GetActiveScene().name, new Dictionary<string, object> {
-            {"score", score},
-            {"lastScore", lastHighscore},
-            {"fireTowers", fireTowersPlaced},
-            {"cannonTowers", cannonTowersPlaced},
-            {"archersTowers", archersPlaced},
-            {"walls", wallsPlaced},
-            {"upgrades", upgradesMade},
-            {"totalTime", totalTime},
-            {"fps", Time.renderedFrameCount / totalTime}
-        });
-
-//        AnalyticsEvent.Custom("test2", new Dictionary<string, object> {
-//            {"score", score},
-//            {"totalTime", totalTime}
-//        });
+            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object>{
+                {"score", score},
+                {"lastScore", lastHighscore},
+                {"fireTowers", fireTowersPlaced},
+                {"cannonTowers", cannonTowersPlaced},
+                {"archersTowers", archersPlaced},
+                {"walls", wallsPlaced},
+                {"upgrades", upgradesMade},
+                {"totalTime", totalTime},
+                {"fps", Time.renderedFrameCount / totalTime}
+        }   }   });
 
         Analytics.FlushEvents();
     }
 
-    public static void towerPlaced(string towerType, float distanceToBase)
+    public static void towerPlaced(string towerType, float distanceToBase, DefenceObject tower)
     {
         switch (towerType)
         {
@@ -62,25 +57,36 @@ public class AnalyticsHelper : MonoBehaviour {
             default:
                 break;
         }
-
+        
         AnalyticsEvent.Custom("towerPlaced", new Dictionary<string, object> {
-            {"towerType", towerType},
-            {"distanceToBase", distanceToBase }
-        });
+            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object> {
+                {tower.getGUID().ToString(), new Dictionary<string, object>{
+                    {"towerType", towerType},
+                    {"distanceToBase", distanceToBase }
+        }   }   }}});
     }
 
-    public static void towerUpgraded(string towerType, int toLevel)
+    public static void towerUpgraded(string towerType, int toLevel, DefenceObject tower)
     {
         upgradesMade++;
         AnalyticsEvent.Custom("towerUpgraded", new Dictionary<string, object> {
-            {"towerType", towerType },
-            {"upgradedToLevel", toLevel }
+            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object> {
+                {tower.getGUID().ToString(), new Dictionary<string, object>{
+                    {"towerType", towerType},
+                    {"toLevel", toLevel }
+                }   
+                }   
+            }
+            }
         });
     }
 
     public static void introSkipped(float skippedAt) {
         AnalyticsEvent.CutsceneSkip(SceneManager.GetActiveScene().name, new Dictionary<string, object>() {
-            {"skippedAt", skippedAt}
+            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object>{
+                {"skippedAt", skippedAt}
+            }   
+            }   
         });
     }
 
@@ -89,6 +95,7 @@ public class AnalyticsHelper : MonoBehaviour {
         var totalTime = Time.timeSinceLevelLoad;
         
         AnalyticsEvent.Custom("highscoreNew", new Dictionary<string, object> {
+            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object>{
             {"score", score},
             {"lastScore", lastHighscore},
             {"fireTowers", fireTowersPlaced},
@@ -98,6 +105,6 @@ public class AnalyticsHelper : MonoBehaviour {
             {"upgrades", upgradesMade},
             {"totalTime", totalTime},
             {"fps", Time.renderedFrameCount / totalTime}
-        });
+        } } });
     }
 }

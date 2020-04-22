@@ -7,6 +7,7 @@ public class GenericProjectile : MonoBehaviour {
     [Header("Projectile-Settings")] public float speed;
     public Vector3 target;
     public GameObject impactPrefab;
+    public AudioSource impactSound;
     public List<GameObject> trails;
 
 
@@ -40,6 +41,9 @@ public class GenericProjectile : MonoBehaviour {
         ContactPoint contact = collision.contacts[0];
         Quaternion rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
         Vector3 pos = contact.point;
+
+        if(impactSound != null)
+            impactSound.Play(0);
 
         if (impactPrefab != null) {
             var impactFX = Instantiate(impactPrefab, pos, rot) as GameObject;

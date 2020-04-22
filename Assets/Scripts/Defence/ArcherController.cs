@@ -10,6 +10,7 @@ public class ArcherController : MonoBehaviour {
     public float minY;
     public float maxY;
     public Transform launcFrom;
+    public AudioSource shootSound;
 
     //gets updated by ArcherTargetFinder system
     public static Dictionary<ArcherController, Vector3> targetPositions = new Dictionary<ArcherController, Vector3>();
@@ -43,6 +44,8 @@ public class ArcherController : MonoBehaviour {
     }
 
     public void fireArrow() {
+        if (shootSound != null)
+            shootSound.Play(0);
         spawnArrow(launcFrom.position);
     }
     

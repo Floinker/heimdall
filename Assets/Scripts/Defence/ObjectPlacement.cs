@@ -23,6 +23,8 @@ public class ObjectPlacement : MonoBehaviour
 
     public bool isPlacing = false;
 
+    private float startMouseX;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,16 +61,19 @@ public class ObjectPlacement : MonoBehaviour
                 
             }
 
-            if (Input.GetButtonDown("RotateLeft"))
+            if (Input.GetButtonDown("Rotate"))
             {
-                
-                tower.transform.Rotate(0f, 10f, 0f);
+                startMouseX = Input.mousePosition.x;
             }
 
-            if (Input.GetButtonDown("RotateRight"))
+            if(Input.GetButton("Rotate"))
             {
-                
-                tower.transform.Rotate(0f, -10f, 0f);
+                if(tower != null)
+                {
+                    float actualRot = startMouseX - Input.mousePosition.x;
+                    tower.transform.Rotate(0f, actualRot, 0f);
+                    startMouseX = Input.mousePosition.x;
+                }    
             }
 
             if(Input.GetButtonDown("CycleTowerLeft")){
@@ -153,7 +158,7 @@ public class ObjectPlacement : MonoBehaviour
            
             float distanceToBase = Vector3.Distance(tower.transform.position, playerBase.position);
 
-            AnalyticsHelper.towerPlaced(tower.GetComponent<DefenceObject>().GetTowerType(), distanceToBase);
+            AnalyticsHelper.towerPlaced(tower.GetComponent<DefenceObject>().GetTowerType(), distanceToBase, tower.GetComponent<DefenceObject>());
             tower.GetComponent<DefenceObject>().setIsPlaced(true);
         }
 
