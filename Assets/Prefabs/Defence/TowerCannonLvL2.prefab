@@ -168,11 +168,13 @@ MonoBehaviour:
   surface: {fileID: 0}
   range: 80
   target: {x: 0, y: 0, z: 0}
+  objectPlacement: {fileID: 5878914127421953741, guid: 156c767e5ea0a764a957cc26cfdf14e2,
+    type: 3}
   upgrades:
   - upgrade: {fileID: 11400000, guid: ca546aa538a0a85409e73394881debf6, type: 2}
-    cost: 100
+    cost: 350
   - upgrade: {fileID: 11400000, guid: a81093b25d8837746af5dae86968a04f, type: 2}
-    cost: 150
+    cost: 500
   currentLevel: 1
   projectile: {fileID: 872995183287915009, guid: d11b5f4eaecf85c46a4c6a48c53c9ad3,
     type: 3}
@@ -476,7 +478,6 @@ GameObject:
   - component: {fileID: 4072384464699788776}
   - component: {fileID: 2776381428107894039}
   - component: {fileID: 8602051349327170665}
-  - component: {fileID: 8308551362148317290}
   m_Layer: 8
   m_Name: RangeObj
   m_TagString: Untagged
@@ -545,20 +546,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!136 &8308551362148317290
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6304424244542311310}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &7650769734687289237
 GameObject:
   m_ObjectHideFlags: 0

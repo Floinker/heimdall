@@ -141,7 +141,8 @@ MonoBehaviour:
   countX: 3
   countY: 1
   spacing: 1
-  delay: 10
+  delay: 2
+  updateRateOverTime: 0.99
 --- !u!1 &8014393792061137813
 GameObject:
   m_ObjectHideFlags: 0
@@ -826,6 +827,16 @@ PrefabInstance:
         type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
       value: 0.18431371
+      objectReference: {fileID: 0}
+    - target: {fileID: 198097654110051690, guid: 099d1731863eed346bed372725b45674,
+        type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 198097654110051690, guid: 099d1731863eed346bed372725b45674,
+        type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 24
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 099d1731863eed346bed372725b45674, type: 3}

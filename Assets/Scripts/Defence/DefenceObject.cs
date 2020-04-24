@@ -19,6 +19,10 @@ public class DefenceObject : MonoBehaviour {
     public float range;
     public Vector3 target;
 
+    public GameObject objectPlacement;
+
+    private Bounds buildingArea;
+
     [Header("Defence Upgrades")] public List<PlayerUpgrade> upgrades = new List<PlayerUpgrade>();
 
     public int currentLevel = 0;
@@ -33,6 +37,8 @@ public class DefenceObject : MonoBehaviour {
     protected Button levelUpButton;
     protected Button destroyButton;
     protected Text tooltipText;
+    protected Image coinImage;
+    protected Text coinCount;
 
     private PlayerStats playerStats;
 
@@ -46,13 +52,16 @@ public class DefenceObject : MonoBehaviour {
     private float lerpTime = 0.0f;
     private int collisionCount;
 
+    private bool playerCharged = false;
+
     //Analytics
     private Guid guid;
 
     // Start is called before the first frame update
     protected virtual void Start() {
         guid = System.Guid.NewGuid();
-        Debug.Log(guid);
+
+        buildingArea = new Bounds(objectPlacement.GetComponent<ObjectPlacement>().buildAreaCenter, objectPlacement.GetComponent<ObjectPlacement>().buildAreaSize);
 
         int childCount = 0;
         collisionCount = 0;
@@ -119,6 +128,20 @@ public class DefenceObject : MonoBehaviour {
 
         tooltipText.color = new Color(0, 0, 0, 0);
         tooltipText.transform.parent.gameObject.GetComponent<Image>().color = new Color(0, 0, 0, 0);
+
+        coinImage = tooltipText.transform.GetComponentInChildren<Image>();
+        coinCount = tooltipText.transform.GetComponentsInChildren<Text>()[1];
+
+        if (currentLevel < upgrades.Capacity - 1 )
+        {
+            coinCount.text = upgrades[currentLevel + 1].cost.ToString();
+        }
+        else
+        {
+            coinCount.gameObject.SetActive(false);
+            coinImage.gameObject.SetActive(false);
+        }
+            
         //tooltipText.transform.parent.gameObject.SetActive(false);
     }
 
@@ -131,7 +154,12 @@ public class DefenceObject : MonoBehaviour {
                 placeSound.Play(0);
                 placeSound = null;
             }
-                
+
+            if (!playerCharged)
+            {
+                playerStats.playerCoins -= upgrades[currentLevel].cost;
+                playerCharged = true;
+            }
 
             if (!isDissolved)
             {
@@ -188,7 +216,7 @@ public class DefenceObject : MonoBehaviour {
             }
         }
         else {
-            if (collisionCount < 1){
+            if (collisionCount < 1 && buildingArea.Contains(transform.position)){
                 canPlace = true;
                 foreach (GameObject go in childObjects)
                 {
@@ -248,6 +276,7 @@ public class DefenceObject : MonoBehaviour {
                 currentLevel++;
                 playerStats.playerCoins -= upgrades[currentLevel].cost;
                 GameObject temp = Instantiate(upgradePrefabs[currentLevel], transform.position, Quaternion.identity);
+                temp.GetComponent<DefenceObject>().playerCharged = true;
                 temp.GetComponent<DefenceObject>().setIsPlaced(true);
 
                 AnalyticsHelper.towerUpgraded(GetTowerType(), currentLevel, this);

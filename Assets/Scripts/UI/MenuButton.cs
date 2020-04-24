@@ -8,6 +8,7 @@ public class MenuButton : MonoBehaviour {
     [SerializeField] Animator animator;
     [SerializeField] AnimatorFunctions animatorFunctions;
     [SerializeField] int thisIndex;
+    [SerializeField] GameLoader gameLoader;
 
     // Update is called once per frame
     void Update() {
@@ -22,12 +23,14 @@ public class MenuButton : MonoBehaviour {
 
                 //Check if animation is finished
                 if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0)) {
-                    switch (thisIndex) {
+                    switch (menuButtonController.index) {
                         //Play Button
                         case 0:
+                            playPressed();
                             break;
                         //Options Button
                         case 1:
+                            optionsPressed();
                             break;
                         //Quit Button
                         case 2:
@@ -43,11 +46,17 @@ public class MenuButton : MonoBehaviour {
     }
 
     public void startPlayAnimManual() {
-        print("starting anim!");
         animator.SetTrigger("pressedTrigger");
     }
 
     public void playPressed() {
-        print("play pressed in main menu!");
+        Debug.Log("playPressed");
+        gameLoader.LoadGame();
+    }
+
+    public void optionsPressed()
+    {
+        Debug.Log("optionsPressed");
+        gameLoader.LoadScene(2);
     }
 }

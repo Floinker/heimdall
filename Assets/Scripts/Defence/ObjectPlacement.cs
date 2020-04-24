@@ -9,6 +9,9 @@ public class ObjectPlacement : MonoBehaviour
     public GameObject[] towerPrefabs;
     public GameObject uiPrefab;
     private GameObject uiInstance;
+    public GameObject costPrefab;
+    private GameObject costinstance;
+    private Text costText;
     private int currentPrefab = 0;
     public LayerMask relevantLayer;
     public int defenceLayer;
@@ -24,6 +27,7 @@ public class ObjectPlacement : MonoBehaviour
     public bool isPlacing = false;
 
     private float startMouseX;
+
 
     // Start is called before the first frame update
     void Start()
@@ -61,6 +65,18 @@ public class ObjectPlacement : MonoBehaviour
                 
             }
 
+            if (costinstance != null)
+                costinstance.transform.position = Input.mousePosition;
+            /*
+            if (buildingArea.Contains(tower.transform.position))
+            {
+                tower.GetComponent<DefenceObject>().SetCanPlace(true);
+            }
+            else
+            {
+                tower.GetComponent<DefenceObject>().SetCanPlace(false);
+            }
+            */
             if (Input.GetButtonDown("Rotate"))
             {
                 startMouseX = Input.mousePosition.x;
@@ -150,6 +166,8 @@ public class ObjectPlacement : MonoBehaviour
 
     void InstantiateHoldingObject()
     {
+        if (costinstance != null)
+            Destroy(costinstance);
 
         if (tower && GetComponent<PlayerStats>().playerCoins >= tower.GetComponent<DefenceObject>().upgrades[tower.GetComponent<DefenceObject>().currentLevel].cost)
         {
@@ -172,11 +190,11 @@ public class ObjectPlacement : MonoBehaviour
             if(hit.transform.gameObject.layer != 5)
             {
                 Vector3 point = hit.point;
-           
-                if(tower != null)
-                    GetComponent<PlayerStats>().playerCoins -= tower.GetComponent<DefenceObject>().upgrades[tower.GetComponent<DefenceObject>().currentLevel].cost;
+
                 tower = Instantiate(towerPrefabs[currentPrefab], point, Quaternion.identity);
-                tower.GetComponent<DefenceObject>().SetCanPlace(true);
+                costinstance = Instantiate(costPrefab, FindObjectOfType<Canvas>().transform);
+                costText = costinstance.GetComponentInChildren<Text>();
+                costText.text = tower.GetComponent<DefenceObject>().upgrades[tower.GetComponent<DefenceObject>().currentLevel].cost.ToString();
             }
             
         }
@@ -199,8 +217,6 @@ public class ObjectPlacement : MonoBehaviour
     private void SetupUI()
     {
         uiInstance = Instantiate(uiPrefab, FindObjectOfType<Canvas>().transform);
-        toggleBuildingModeButton = uiInstance.GetComponentsInChildren<Button>()[0];
-        toggleBuildingModeButton.onClick.AddListener(ToggleBuildingMode);
     }
 
     public void ToggleBuildingMode()
@@ -208,11 +224,14 @@ public class ObjectPlacement : MonoBehaviour
         if (isPlacing)
         {
             Destroy(tower);
+            if (costinstance != null)
+                Destroy(costinstance);
         }
         else
         {
             InstantiateHoldingObject();
         }
+       
         isPlacing = !isPlacing;
     }
 

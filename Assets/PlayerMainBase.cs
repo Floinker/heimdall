@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMainBase : MonoBehaviour, IDamagable {
 
@@ -25,6 +26,8 @@ public class PlayerMainBase : MonoBehaviour, IDamagable {
 
     public virtual void onDeath() {
         AnalyticsHelper.gameOverEvent();
+        GameOverScreen.score = ScoreDisplay.score;
+        SceneManager.LoadScene("GameOver");
         //to be implemented
     }
     

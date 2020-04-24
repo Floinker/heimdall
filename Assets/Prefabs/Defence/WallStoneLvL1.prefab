@@ -57,11 +57,13 @@ MonoBehaviour:
   surface: {fileID: 0}
   range: 0
   target: {x: 0, y: 0, z: 0}
+  objectPlacement: {fileID: 5878914127421953741, guid: 156c767e5ea0a764a957cc26cfdf14e2,
+    type: 3}
   upgrades:
   - upgrade: {fileID: 11400000, guid: d7565db1add9e814abb8d5607fc5b841, type: 2}
-    cost: 0
+    cost: 75
   currentLevel: 0
-  health: 100
+  health: 50
 --- !u!65 &911694407240672023
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -119,7 +121,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 2111523848909927193, guid: 29e2f7d7ad29919449c2d805d7a4f030,
     type: 2}
   m_audioClip: {fileID: 8300000, guid: b85442f46950987409c5d8b750fdf134, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

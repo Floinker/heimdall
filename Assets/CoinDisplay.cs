@@ -13,8 +13,8 @@ public class CoinDisplay : MonoBehaviour
         coinCount = transform.GetChild(0).GetComponent<Text>();
     }
     // Update is called once per frame
-    void Update()
-    {
-        coinCount.text = "" + stats.playerCoins;
+    void Update() {
+        var text = (int) stats.playerCoins;
+        coinCount.text = "" + text;
     }
 }

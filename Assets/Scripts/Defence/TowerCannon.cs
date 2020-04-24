@@ -36,9 +36,6 @@ public class TowerCannon : Tower
     {
         GameObject cb = Instantiate(projectile, new Vector3(projectileStart.position.x, projectileStart.position.y, projectileStart.position.z), Quaternion.identity);
 
-        var direction = target - cb.transform.position;
-        
-        cb.GetComponent<Rigidbody>().AddForce(projectileStart.forward * 1000f);
         cb.GetComponent<GenericProjectile>().target = target;
     }
 

@@ -54,6 +54,7 @@ public class ArrowUpdateSyste : JobComponentSystem {
 
             getParticle().doEmit(elem + new Vector3(0, 1, 0));
             ScoreDisplay.score++;
+            PlayerStats.getInstance().playerCoins += 1;
         }
 
         entityManager.DestroyEntity(toDelete);

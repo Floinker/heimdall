@@ -13,7 +13,7 @@ public class CannonBall : GenericProjectile
     // Update is called once per frame
     protected override void FixedUpdate()
     {
-        
+        base.FixedUpdate();
     }
 
     protected override void OnCollisionEnter(Collision collision)

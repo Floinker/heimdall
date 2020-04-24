@@ -23,17 +23,21 @@ public class AnalyticsHelper : MonoBehaviour {
         var totalTime = Time.timeSinceLevelLoad;
 
         AnalyticsEvent.GameOver(SceneManager.GetActiveScene().name, new Dictionary<string, object> {
-            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object>{
-                {"score", score},
-                {"lastScore", lastHighscore},
-                {"fireTowers", fireTowersPlaced},
-                {"cannonTowers", cannonTowersPlaced},
-                {"archersTowers", archersPlaced},
-                {"walls", wallsPlaced},
-                {"upgrades", upgradesMade},
-                {"totalTime", totalTime},
-                {"fps", Time.renderedFrameCount / totalTime}
-        }   }   });
+            {"score", score},
+            {"lastScore", lastHighscore},
+            {"fireTowers", fireTowersPlaced},
+            {"cannonTowers", cannonTowersPlaced},
+            {"archersTowers", archersPlaced},
+            {"walls", wallsPlaced},
+            {"upgrades", upgradesMade},
+            {"totalTime", totalTime},
+            {"fps", Time.renderedFrameCount / totalTime}
+        });
+
+        //        AnalyticsEvent.Custom("test2", new Dictionary<string, object> {
+        //            {"score", score},
+        //            {"totalTime", totalTime}
+        //        });
 
         Analytics.FlushEvents();
     }
@@ -59,34 +63,23 @@ public class AnalyticsHelper : MonoBehaviour {
         }
         
         AnalyticsEvent.Custom("towerPlaced", new Dictionary<string, object> {
-            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object> {
-                {tower.getGUID().ToString(), new Dictionary<string, object>{
-                    {"towerType", towerType},
-                    {"distanceToBase", distanceToBase }
-        }   }   }}});
+            {"towerType", towerType},
+            {"distanceToBase", distanceToBase }
+        });
     }
 
     public static void towerUpgraded(string towerType, int toLevel, DefenceObject tower)
     {
         upgradesMade++;
         AnalyticsEvent.Custom("towerUpgraded", new Dictionary<string, object> {
-            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object> {
-                {tower.getGUID().ToString(), new Dictionary<string, object>{
-                    {"towerType", towerType},
-                    {"toLevel", toLevel }
-                }   
-                }   
-            }
-            }
+            {"towerType", towerType },
+            {"upgradedToLevel", toLevel }
         });
     }
 
     public static void introSkipped(float skippedAt) {
         AnalyticsEvent.CutsceneSkip(SceneManager.GetActiveScene().name, new Dictionary<string, object>() {
-            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object>{
-                {"skippedAt", skippedAt}
-            }   
-            }   
+             {"skippedAt", skippedAt}
         });
     }
 
@@ -95,7 +88,7 @@ public class AnalyticsHelper : MonoBehaviour {
         var totalTime = Time.timeSinceLevelLoad;
         
         AnalyticsEvent.Custom("highscoreNew", new Dictionary<string, object> {
-            {""+AnalyticsSessionInfo.sessionId, new Dictionary<string, object>{
+
             {"score", score},
             {"lastScore", lastHighscore},
             {"fireTowers", fireTowersPlaced},
@@ -105,6 +98,6 @@ public class AnalyticsHelper : MonoBehaviour {
             {"upgrades", upgradesMade},
             {"totalTime", totalTime},
             {"fps", Time.renderedFrameCount / totalTime}
-        } } });
+        });
     }
 }

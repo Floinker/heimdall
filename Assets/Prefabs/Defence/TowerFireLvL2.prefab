@@ -169,13 +169,15 @@ MonoBehaviour:
   uiPrefab: {fileID: 8555660411562866397, guid: 056e8b3bdd19efe47a4f0a73e6a9f8d2,
     type: 3}
   surface: {fileID: 0}
-  range: 80
+  range: 100
   target: {x: 0, y: 0, z: 0}
+  objectPlacement: {fileID: 5878914127421953741, guid: 156c767e5ea0a764a957cc26cfdf14e2,
+    type: 3}
   upgrades:
   - upgrade: {fileID: 11400000, guid: b768322442c2cec44a88b58b9be6f916, type: 2}
-    cost: 100
+    cost: 350
   - upgrade: {fileID: 11400000, guid: 92d8e5429cdc8274db771605fb25bf10, type: 2}
-    cost: 150
+    cost: 600
   currentLevel: 1
   projectile: {fileID: 2012700457323413465, guid: c9bd76c3d5b1e4b43831739381efacfc,
     type: 3}
@@ -294,7 +296,7 @@ AudioSource:
     type: 2}
   m_audioClip: {fileID: 8300000, guid: 005bf9d1d0db39c4992b0aaf85e05ffb, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.134
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -547,7 +549,6 @@ GameObject:
   - component: {fileID: 4292325857495190269}
   - component: {fileID: 7619940375345560912}
   - component: {fileID: 197086170288634907}
-  - component: {fileID: 8116721813819218501}
   m_Layer: 8
   m_Name: RangeObj
   m_TagString: Untagged
@@ -616,20 +617,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!136 &8116721813819218501
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1574574488599548738}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &3027152991688347637
 GameObject:
   m_ObjectHideFlags: 0

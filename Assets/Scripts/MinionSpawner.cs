@@ -12,13 +12,15 @@ public class MinionSpawner : MonoBehaviour {
     [SerializeField] private int countX;
     [SerializeField] private int countY;
     [SerializeField] private float spacing;
-    [SerializeField] private int delay;
+    [SerializeField] private float delay;    //every x seconds minions are spawned
+    [SerializeField] private float updateRateOverTime; //applied to delay every 60 ticks (approx. 1 second)
 
 
     private Entity entityPrefab;
     private World defaultworld;
     private EntityManager entityManager;
     private int counter = 0;
+    private float time = 0;
     private GameObjectConversionSettings settings;
 
     private void Start() {
@@ -31,8 +33,14 @@ public class MinionSpawner : MonoBehaviour {
 
     private void FixedUpdate() {
         counter++;
-        if (counter % delay == 0) {
+        time += Time.deltaTime;
+        if (time > delay) {
             spawnMinionGroup(this.transform.position, countX, countY, spacing);
+            time -= delay;
+        }
+
+        if (counter % 60 == 0) {
+            delay = updateRateOverTime * delay;
         }
     }
 

@@ -436,6 +436,7 @@ GameObject:
   - component: {fileID: 1088634883}
   - component: {fileID: 3518907277194670639}
   - component: {fileID: 7029626861045166119}
+  - component: {fileID: 7908869332772710748}
   m_Layer: 8
   m_Name: Archer
   m_TagString: Defense
@@ -454,7 +455,6 @@ Transform:
   m_LocalPosition: {x: 80.9, y: 252.15, z: -114.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 6886230356591160236}
   - {fileID: 4153381877090307734}
   - {fileID: 2044655159460770080}
   m_Father: {fileID: 0}
@@ -499,11 +499,13 @@ MonoBehaviour:
   surface: {fileID: 0}
   range: 0
   target: {x: 0, y: 0, z: 0}
+  objectPlacement: {fileID: 5878914127421953741, guid: 156c767e5ea0a764a957cc26cfdf14e2,
+    type: 3}
   upgrades:
   - upgrade: {fileID: 11400000, guid: 6dcee83b47aa6f947966358a066b5263, type: 2}
-    cost: 0
+    cost: 50
   currentLevel: 0
-  health: 100
+  health: 2
 --- !u!95 &1088634883
 Animator:
   serializedVersion: 3
@@ -717,6 +719,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!136 &7908869332772710748
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1135401828436289426}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.96
+  m_Height: 2.81
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.97, z: 0}
 --- !u!1 &1184591872791641551
 GameObject:
   m_ObjectHideFlags: 0
@@ -1735,7 +1751,7 @@ Transform:
   - {fileID: 2790392404978601358}
   - {fileID: 8280891362245233369}
   m_Father: {fileID: 1135401828436289417}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3711272712338210302
 GameObject:
@@ -2297,51 +2313,6 @@ Transform:
   m_Father: {fileID: 8158656492134640150}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -0.8332791, y: -46.836163, z: 2.1676068}
---- !u!1 &5320673596780312538
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6886230356591160236}
-  - component: {fileID: 7246176528219928033}
-  m_Layer: 8
-  m_Name: Collider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6886230356591160236
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5320673596780312538}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1135401828436289417}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &7246176528219928033
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5320673596780312538}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5763413124393142768
 GameObject:
   m_ObjectHideFlags: 0
@@ -3192,7 +3163,7 @@ Transform:
   m_Children:
   - {fileID: 3907527547032814602}
   m_Father: {fileID: 1135401828436289417}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -0, y: -0, z: -0}
 --- !u!1 &8210955172978539695
 GameObject:

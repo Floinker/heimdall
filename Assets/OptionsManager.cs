@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 
 
 public class OptionsManager : MonoBehaviour
 {
+    public AudioMixer mixer;
+
     public Slider musicSlider;
     public Slider sfxSlider;
 
@@ -28,7 +31,7 @@ public class OptionsManager : MonoBehaviour
         if (PlayerPrefs.HasKey("sfxVolume"))
         {
             float value = PlayerPrefs.GetFloat("sfxVolume");
-            sfxSlider.value = value;
+            //sfxSlider.value = value;
 
             value = value * 100;
             sfxPercent.text = "" + (int)value + " %";
@@ -38,6 +41,9 @@ public class OptionsManager : MonoBehaviour
 
     public void UpdatePercent()
     {
+        mixer.SetFloat("MusicVolume", Mathf.Log10(musicSlider.value) * 20);
+        //mixer.SetFloat("SFXVolume", Mathf.Log10(sfxSlider.value) * 20);
+
         float value = sfxSlider.value * 100;
         sfxPercent.text = "" + (int)value + " %";
 
